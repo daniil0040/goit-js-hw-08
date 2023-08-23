@@ -1,36 +1,38 @@
 import throttle from "lodash.throttle";
 
-
 const selectors = {
     form: document.querySelector(".feedback-form"),
     input: document.querySelector("input"),
     textArea : document.querySelector("textarea")
 }
-autoFill()
 const LS_KEY = "feedback-form-state";
-selectors.form.addEventListener("input", throttle(handlerInput,500))
+let userData = JSON.parse(localStorage.getItem("LS_KEY")) ?? { email: "", message: ""}
 
-const value = {}
+selectors.form.addEventListener("input", throttle(handlerInput,500))
+selectors.form.addEventListener("submit", handlerSubmit)
+
+renderPage()
+
 function handlerInput(evt) {
-    value[evt.target.name] = evt.target.value
-    localStorage.setItem("LS_KEY", JSON.stringify(value))
+    userData[evt.target.name] = evt.target.value
+    localStorage.setItem("LS_KEY", JSON.stringify(userData))
 }
 
- selectors.form.addEventListener("submit", handlerSubmit)
 function handlerSubmit(evt) {
     evt.preventDefault();
-    console.log(value);
+    console.log(userData);
     selectors.form.reset();
     localStorage.removeItem("LS_KEY");
+    userData = { email: "", message: ""}
  }
 
 
 
-function autoFill() {
-    const lsValue = JSON.parse(localStorage.getItem("LS_KEY"));
-    if (lsValue) {
-        selectors.input.value = lsValue.email;
-        selectors.textArea.value = lsValue.message
+function renderPage() {
+    // const lsValue = JSON.parse(localStorage.getItem("LS_KEY"));
+    if (userData) {
+        selectors.input.value = userData.email;
+        selectors.textArea.value = userData.message
     }
 }
 
